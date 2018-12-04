@@ -22,6 +22,8 @@ public:
 		FVector TargetLocation;
 
 	AMovingPlatform();
+	void AddActiveTrigger();
+	void RemoveActiveTrigger();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -30,4 +32,7 @@ protected:
 private:
 	FVector GlobalTargetLocation;
 	FVector GlobalStartLocation;
+
+	UPROPERTY(EditAnywhere)
+	int ActiveTriggers = 1;
 };

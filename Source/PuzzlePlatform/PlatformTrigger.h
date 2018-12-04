@@ -27,6 +27,9 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere) // Visible - because its pointer, not an object, and we dont want to mess with pointer, we want to change object this pointer point.
 	class UBoxComponent* TriggerVolume;
+
+	UPROPERTY(EditAnywhere)
+	TArray<class AMovingPlatform*> PlatformsToTrigger;
 	
 	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

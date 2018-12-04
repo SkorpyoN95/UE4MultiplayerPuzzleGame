@@ -7,6 +7,14 @@ AMovingPlatform::AMovingPlatform() {
 	SetMobility(EComponentMobility::Movable);
 }
 
+void AMovingPlatform::AddActiveTrigger(){
+	ActiveTriggers++;
+}
+
+void AMovingPlatform::RemoveActiveTrigger(){
+	if(ActiveTriggers) ActiveTriggers--;
+}
+
 void AMovingPlatform::BeginPlay() {
 	Super::BeginPlay();
 
@@ -21,7 +29,7 @@ void AMovingPlatform::BeginPlay() {
 void AMovingPlatform::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (HasAuthority()) {
+	if (HasAuthority() && ActiveTriggers) {
 		FVector location = GetActorLocation();
 
 		float JourneyLength = (GlobalTargetLocation - GlobalStartLocation).Size();
