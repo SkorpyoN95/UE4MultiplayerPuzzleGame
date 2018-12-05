@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include <UObject/ConstructorHelpers.h>
+#include <Blueprint/UserWidget.h>
 #include "PuzzlePlatformGameInstance.generated.h"
 
 /**
@@ -17,10 +19,16 @@ class PUZZLEPLATFORM_API UPuzzlePlatformGameInstance : public UGameInstance
 public:
 	UPuzzlePlatformGameInstance(const FObjectInitializer &ObjectInitializer);
 	virtual void Init();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadMenu();
 	
 	UFUNCTION(Exec)
 	void Host();
 
 	UFUNCTION(Exec)
 	void Join(const FString& address);
+
+private:
+	TSubclassOf<class UUserWidget> MenuClass;
 };

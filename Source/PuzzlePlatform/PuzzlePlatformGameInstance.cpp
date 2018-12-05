@@ -5,11 +5,24 @@
 #include <GameFramework/PlayerController.h>
 
 UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitializer &ObjectInitializer) {
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance from console!"));
+	ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
+	if (MainMenuBPClass.Class != NULL) {
+		MenuClass = MainMenuBPClass.Class;
+		UE_LOG(LogTemp, Warning, TEXT("Name of class: %s!"), *MenuClass->GetName());
+	}
+	
 }
 
 void UPuzzlePlatformGameInstance::Init(){
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance from init!"));
+}
+
+void UPuzzlePlatformGameInstance::LoadMenu(){
+	UUserWidget* Menu;
+	if (MenuClass) {
+		Menu = CreateWidget<UUserWidget>(this, MenuClass);
+		Menu->AddToViewport();
+	}
 }
 
 void UPuzzlePlatformGameInstance::Host(){
