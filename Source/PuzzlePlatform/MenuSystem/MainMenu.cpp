@@ -2,52 +2,20 @@
 
 #include "MainMenu.h"
 #include <Components/Button.h>
-
-
-void UMainMenu::Setup(void){
-	this->AddToViewport();
-
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!PlayerController) return;
-
-	FInputModeUIOnly Input;
-	Input.SetWidgetToFocus(this->TakeWidget());
-	Input.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	PlayerController->SetInputMode(Input);
-	PlayerController->bShowMouseCursor = true;
-}
-
-void UMainMenu::Teardown(void){
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!PlayerController) return;
-
-	FInputModeGameOnly Input;
-
-	PlayerController->SetInputMode(Input);
-	PlayerController->bShowMouseCursor = false;
-
-	this->RemoveFromViewport();
-}
+#include <Components/WidgetSwitcher.h>
+#include <Components/EditableTextBox.h>
 
 bool UMainMenu::Initialize() {
 	bool Success = Super::Initialize();
-	if (!Success || !Host || !Join) return false;
+	if (!Success || !HostButton || !JoinMenuButton || !JoinButton || !CancelButton || !ExitButton) return false;
 
-	Host->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
-	Join->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	JoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::GoBack);
+	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
+	ExitButton->OnClicked.AddDynamic(this, &UMainMenu::ExitToDesktop);
 
 	return true;
-}
-
-void UMainMenu::SetMenuInterface(IMenuInterface* interface) {
-	MenuInterface = interface;
 }
 
 void UMainMenu::HostServer(){
@@ -55,6 +23,24 @@ void UMainMenu::HostServer(){
 	MenuInterface->Host();
 }
 
-void UMainMenu::JoinServer() {
-	UE_LOG(LogTemp, Warning, TEXT("I'm about to join to server!"));
+void UMainMenu::JoinServer(){
+	if (!MenuInterface || !IPAddressBox) return;
+	MenuInterface->Join(IPAddressBox->GetText().ToString());
+}
+
+void UMainMenu::OpenJoinMenu() {
+	if (!MenuSwitcher || !JoinMenu) return;
+
+	MenuSwitcher->SetActiveWidget(JoinMenu);
+}
+
+void UMainMenu::GoBack() {
+	if (!MenuSwitcher || !BaseMenu) return;
+
+	MenuSwitcher->SetActiveWidget(BaseMenu);
+}
+
+void UMainMenu::ExitToDesktop() {
+	if (!MenuInterface) return;
+	MenuInterface->Exit();
 }
